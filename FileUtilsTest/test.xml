@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<master>
+	<male>
+		<person pname="name00">
+			<age>100</age>
+		</person>
+		<person pname="name01">
+            <age>101</age>
+        </person>
+		<vale>10000</vale>
+	</male>
+	<male>
+        <person pname="name1">
+            <age>11</age>
+        </person>
+        <vale>10001</vale>
+	</male>
+	<male>
+        <person pname="name2">
+            <age>12</age>
+        </person>
+        <vale>10002</vale>
+	</male>
+	<female fname="female0" fvalue="00000" />
+	<female fname="female1" fvalue="00001" />
+	<female fname="female2" fvalue="00002" />
+</master>
