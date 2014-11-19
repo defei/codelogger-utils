@@ -1,9 +1,6 @@
 package org.codelogger.utils;
 
-import static junit.framework.Assert.assertNotNull;
-
-import org.codelogger.utils.MonitorUtils;
-import org.codelogger.utils.Monitor;
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 

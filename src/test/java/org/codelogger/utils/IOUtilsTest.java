@@ -1,6 +1,6 @@
 package org.codelogger.utils;
 
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,18 +10,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.codelogger.utils.FileUtils;
-import org.codelogger.utils.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 
 public class IOUtilsTest {
 
-    public final static String testPath = "FileUtilsTest/";
-
-    private final String testReadFileName = "testFile.txt";
-
-    private final String testWriteFileName = "testForWrite.txt";
+    private final String suffix = "txt";
 
     private final String noSuchFileOrFolder = "/aaa/No such file or folder!";
 
@@ -32,11 +26,13 @@ public class IOUtilsTest {
     private OutputStream testOutputStream;
 
     @Before
-    public void init() throws FileNotFoundException {
+    public void init() throws IOException {
 
-        testFileForRead = new File(testPath + testReadFileName);
-        testInputStream = new FileInputStream(testPath + testReadFileName);
-        testOutputStream = new FileOutputStream(testPath + testWriteFileName);
+        testFileForRead = File.createTempFile(StringUtils.getRandomString(21), suffix);
+        FileUtils.write("Hello".getBytes(), testFileForRead);
+        testInputStream = new FileInputStream(testFileForRead);
+        testOutputStream = new FileOutputStream(File.createTempFile(
+                StringUtils.getRandomString(21), suffix));
     }
 
     @Test(expected = FileNotFoundException.class)

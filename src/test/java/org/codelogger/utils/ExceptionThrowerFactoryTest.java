@@ -5,12 +5,10 @@ package org.codelogger.utils;
  * 
  * @author DengDefei
  */
-import static junit.framework.Assert.assertNotNull;
 
-import org.codelogger.utils.ExceptionThrower;
-import org.codelogger.utils.ExceptionThrowerFactory;
+import static org.junit.Assert.assertNotNull;
+
 import org.codelogger.utils.exceptions.InvalidRangeException;
-
 import org.junit.Test;
 
 public class ExceptionThrowerFactoryTest {

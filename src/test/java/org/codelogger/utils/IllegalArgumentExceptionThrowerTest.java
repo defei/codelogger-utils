@@ -10,9 +10,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.Assert;
-
-import org.codelogger.utils.IllegalArgumentExceptionThrower;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class IllegalArgumentExceptionThrowerTest {

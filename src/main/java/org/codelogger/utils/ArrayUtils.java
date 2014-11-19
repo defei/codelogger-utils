@@ -1,7 +1,5 @@
 package org.codelogger.utils;
 
-import static org.codelogger.utils.ClassUtils.getPrimitiveClass;
-
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -284,7 +282,8 @@ public class ArrayUtils {
         int newArraySize = (end - start) + 1;
         @SuppressWarnings("unchecked")
         T newArray = (T) buildArray(
-            ClassUtils.getPrimitiveClass(ClassUtils.getComponentClass(array)), newArraySize, null);
+                ClassUtils.getPrimitiveClass(ClassUtils.getComponentClass(array)), newArraySize,
+                null);
         System.arraycopy(array, start, newArray, 0, newArraySize);
         return newArray;
     }

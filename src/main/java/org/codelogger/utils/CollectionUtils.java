@@ -1,7 +1,5 @@
 package org.codelogger.utils;
 
-import static org.codelogger.utils.MathUtils.randomInt;
-
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;

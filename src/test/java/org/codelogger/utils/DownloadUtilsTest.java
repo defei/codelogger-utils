@@ -1,13 +1,10 @@
 package org.codelogger.utils;
 
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import junit.framework.Assert;
-
-import org.codelogger.utils.DownloadUtils;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -34,6 +31,6 @@ public class DownloadUtilsTest {
     public void getBytesFromHttp_theURLIsCorrect_returnDestinationBytes() throws IOException {
 
         byte[] bytesFromHttp = DownloadUtils.getBytesFromHttp(testURL);
-        Assert.assertNotNull(bytesFromHttp);
+        assertNotNull(bytesFromHttp);
     }
 }

@@ -5,17 +5,17 @@ package org.codelogger.utils;
  * 
  * @author DengDefei
  */
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
 import static org.codelogger.utils.PrintUtils.println;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.codelogger.utils.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -207,13 +207,13 @@ public class CollectionUtilsTest {
     public void listToArray_listIsNull_returnNull() {
 
         list = null;
-        assertEquals(null, CollectionUtils.toArray(list));
+        assertNull(CollectionUtils.toArray(list));
     }
 
     @Test
     public void listToArray_listIsEmpty_returnNull() {
 
-        assertEquals(null, CollectionUtils.toArray(list));
+        assertNull(CollectionUtils.toArray(list));
     }
 
     @Test
