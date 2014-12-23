@@ -99,4 +99,15 @@ public class StringProcessChainTest {
       .getResult();
     assertFalse(expect.equals(deleteIgnoreCase));
   }
+
+  @Test
+  public void finalTest() {
+
+    String expected = "Iamjuandtest!";
+    String destination = "sT f";
+    String source = "I am just for test!";
+    String actual = StringProcessChain.getInstance(source).deleteIgnoreCase(destination)
+      .trimAllWhitespace().replacIgnoreCase("or", "and").getResult();
+    assertEquals(expected, actual);
+  }
 }
