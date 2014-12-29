@@ -134,8 +134,9 @@ public class DateUtils {
   public static String getDateFormat(final String date, final String datePattern,
     final String formatPattern) {
 
+    Date parsedDate = getDateFromString(date, datePattern);
     SimpleDateFormat simpleDateFormat = buildDateFormat(formatPattern);
-    return simpleDateFormat.format(getDateFromString(date, datePattern));
+    return simpleDateFormat.format(parsedDate);
   }
 
   /**
