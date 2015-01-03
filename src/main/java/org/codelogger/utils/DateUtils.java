@@ -546,6 +546,19 @@ public class DateUtils {
   }
 
   /**
+   * Returns the beginning of the given day. <br/>
+   * e.g: '2012-12-21 21:21:21' => '2012-12-21 23:59:59'
+   * 
+   * @param date date to be handled.
+   * @return a new date is ending of the given day.
+   * @throws DateException
+   */
+  public static Date formatToEndOfDay(final Date date) {
+
+    return getDateOfSecondsBack(1, getDateOfDaysBack(-1, formatToStartOfDay(date)));
+  }
+
+  /**
    * Get a SimpleDateFormat object by given pattern.
    * 
    * @param pattern date format pattern.
