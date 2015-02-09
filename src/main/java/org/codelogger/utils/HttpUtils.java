@@ -13,6 +13,8 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
@@ -21,133 +23,139 @@ import org.codelogger.utils.exceptions.HttpException;
 
 public class HttpUtils {
 
-    private HttpUtils() {
+  private HttpUtils() {
 
+  }
+
+  /**
+   * access given url by get request without retry when exception.
+   * 
+   * @param url url to access
+   * @return response content of target url
+   */
+  public static String doGet(final String url) {
+
+    CloseableHttpClient httpClient = getHttpClient();
+    HttpGet httpGet = new HttpGet(url);
+    try {
+      return EntityUtils.toString(httpClient.execute(httpGet).getEntity());
+    } catch (IOException e) {
+      throw new HttpException(e);
     }
+  }
 
-    /**
-     * access given url by get request without retry when exception.
-     * 
-     * @param url
-     *            url to access
-     * @return response content of target url
-     */
-    public static String doGet(final String url) {
+  private static CloseableHttpClient getHttpClient() {
 
-        CloseableHttpClient httpClient = getHttpClient();
-        HttpGet httpGet = new HttpGet(url);
-        try {
-            return EntityUtils.toString(httpClient.execute(httpGet).getEntity());
-        } catch (IOException e) {
-            throw new HttpException(e);
-        }
+    HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+    CloseableHttpClient httpClient = httpClientBuilder.build();
+    return httpClient;
+  }
+
+  /**
+   * access given url by get request, if get exception, will retry by given
+   * retryTimes.
+   * 
+   * @param url url to access
+   * @param retryTimes retry times when get exception.
+   * @return response content of target url.
+   */
+  public static String doGet(final String url, final int retryTimes) {
+
+    try {
+      return doGetByLoop(url, retryTimes);
+    } catch (HttpException e) {
+      throw new HttpException(format("Failed to download content for url: '%s'. Tried '%s' times",
+        url, Math.max(retryTimes + 1, 1)));
     }
+  }
 
-    private static CloseableHttpClient getHttpClient() {
+  private static String doGetByLoop(final String url, final int retryTimes) {
 
-        HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
-        CloseableHttpClient httpClient = httpClientBuilder.build();
-        return httpClient;
+    try {
+      return doGet(url);
+    } catch (HttpException e) {
+      if (retryTimes > 0) {
+        return doGetByLoop(url, retryTimes - 1);
+      } else {
+        throw e;
+      }
     }
+  }
 
-    /**
-     * access given url by get request, if get exception, will retry by given
-     * retryTimes.
-     * 
-     * @param url
-     *            url to access
-     * @param retryTimes
-     *            retry times when get exception.
-     * @return response content of target url.
-     */
-    public static String doGet(final String url, final int retryTimes) {
+  /**
+   * access given action with given parameters(<strong>default encoding by
+   * "UTF-8"</strong>) by post request without retry when exception.
+   * 
+   * @param action action url to access
+   * @param parameters parameters to post
+   * @return response content of target action url
+   */
+  public static String doPost(final String action, final Map<String, String> parameters) {
 
-        try {
-            return doGetByLoop(url, retryTimes);
-        } catch (HttpException e) {
-            throw new HttpException(format(
-                    "Failed to download content for url: '%s'. Tried '%s' times", url,
-                    Math.max(retryTimes + 1, 1)));
-        }
+    List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+    for (Entry<String, String> nameValuePair : parameters.entrySet()) {
+      nvps.add(new BasicNameValuePair(nameValuePair.getKey(), nameValuePair.getValue()));
     }
+    HttpPost httpPost = new HttpPost(action);
+    try {
 
-    private static String doGetByLoop(final String url, final int retryTimes) {
-
-        try {
-            return doGet(url);
-        } catch (HttpException e) {
-            if (retryTimes > 0) {
-                return doGetByLoop(url, retryTimes - 1);
-            } else {
-                throw e;
-            }
-        }
+      httpPost.setEntity(new UrlEncodedFormEntity(nvps, "UTF-8"));
+      CloseableHttpClient httpClient = getHttpClient();
+      CloseableHttpResponse httpResponse = httpClient.execute(httpPost);
+      return EntityUtils.toString(httpResponse.getEntity());
+    } catch (Exception e) {
+      throw new HttpException(e);
     }
+  }
 
-    /**
-     * access given action with given parameters(<strong>default encoding by
-     * "UTF-8"</strong>) by post request without retry when exception.
-     * 
-     * @param action
-     *            action url to access
-     * @param parameters
-     *            parameters to post
-     * @return response content of target action url
-     */
-    public static String doPost(final String action, final Map<String, String> parameters) {
+  public static String doPost(final String url, final ContentType contentType, final String body) {
 
-        List<NameValuePair> nvps = new ArrayList<NameValuePair>();
-        for (Entry<String, String> nameValuePair : parameters.entrySet()) {
-            nvps.add(new BasicNameValuePair(nameValuePair.getKey(), nameValuePair.getValue()));
-        }
-        HttpPost httpPost = new HttpPost(action);
-        try {
+    HttpPost httpPost = new HttpPost(url);
+    try {
 
-            httpPost.setEntity(new UrlEncodedFormEntity(nvps, "UTF-8"));
-            CloseableHttpClient httpClient = getHttpClient();
-            CloseableHttpResponse httpResponse = httpClient.execute(httpPost);
-            return EntityUtils.toString(httpResponse.getEntity());
-        } catch (Exception e) {
-            throw new HttpException(e);
-        }
+      httpPost.addHeader("content-type", contentType.getMimeType());
+      httpPost.setEntity(new StringEntity(body));
+      CloseableHttpClient httpClient = getHttpClient();
+      CloseableHttpResponse httpResponse = httpClient.execute(httpPost);
+      return EntityUtils.toString(httpResponse.getEntity());
+    } catch (Exception e) {
+      throw new HttpException(e);
     }
+  }
 
-    /**
-     * access given action with given parameters by post, if get exception, will
-     * retry by given retryTimes.
-     * 
-     * @param action
-     *            action url to access
-     * @param parameters
-     *            parameters to post
-     * @param retryTimes
-     *            retry times when get exception.
-     * @return response content of target action url.
-     */
-    public static String doPost(final String action, final Map<String, String> parameters,
-            final int retryTimes) {
+  /**
+   * access given action with given parameters by post, if get exception, will
+   * retry by given retryTimes.
+   * 
+   * @param action action url to access
+   * @param parameters parameters to post
+   * @param retryTimes retry times when get exception.
+   * @return response content of target action url.
+   */
+  public static String doPost(final String action, final Map<String, String> parameters,
+    final int retryTimes) {
 
-        try {
-            return doPostByLoop(action, parameters, retryTimes);
-        } catch (HttpException e) {
-            throw new HttpException(
-                    format("Failed to download content for action url: '%s' with parameters. Tried '%s' times",
-                            action, parameters, Math.max(retryTimes + 1, 1)));
-        }
+    try {
+      return doPostByLoop(action, parameters, retryTimes);
+    } catch (HttpException e) {
+      throw new HttpException(format(
+        "Failed to download content for action url: '%s' with parameters. Tried '%s' times",
+        action, parameters, Math.max(retryTimes + 1, 1)));
     }
+  }
 
-    private static String doPostByLoop(final String action, final Map<String, String> parameters,
-            final int retryTimes) {
+  private static String doPostByLoop(final String action, final Map<String, String> parameters,
+    final int retryTimes) {
 
-        try {
-            return doPost(action, parameters);
-        } catch (HttpException e) {
-            if (retryTimes > 0) {
-                return doPost(action, parameters, retryTimes - 1);
-            } else {
-                throw e;
-            }
-        }
+    try {
+      return doPost(action, parameters);
+    } catch (HttpException e) {
+      if (retryTimes > 0) {
+        return doPost(action, parameters, retryTimes - 1);
+      } else {
+        throw e;
+      }
     }
+  }
 
 }
