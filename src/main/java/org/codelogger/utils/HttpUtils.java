@@ -13,6 +13,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.config.SocketConfig;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -36,6 +37,19 @@ public class HttpUtils {
   public static String doGet(final String url) {
 
     CloseableHttpClient httpClient = getHttpClient();
+    HttpGet httpGet = new HttpGet(url);
+    try {
+      return EntityUtils.toString(httpClient.execute(httpGet).getEntity());
+    } catch (IOException e) {
+      throw new HttpException(e);
+    }
+  }
+
+  public static String doGetWidthTimeout(final String url, final Integer milliSecondsToTimeout) {
+
+    SocketConfig socketConfig = SocketConfig.custom().setSoTimeout(milliSecondsToTimeout).build();
+    CloseableHttpClient httpClient = HttpClientBuilder.create()
+      .setDefaultSocketConfig(socketConfig).build();
     HttpGet httpGet = new HttpGet(url);
     try {
       return EntityUtils.toString(httpClient.execute(httpGet).getEntity());
