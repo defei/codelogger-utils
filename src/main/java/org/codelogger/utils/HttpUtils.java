@@ -30,7 +30,7 @@ public class HttpUtils {
 
   /**
    * access given url by get request without retry when exception.
-   * 
+   *
    * @param url url to access
    * @return response content of target url
    */
@@ -68,7 +68,7 @@ public class HttpUtils {
   /**
    * access given url by get request, if get exception, will retry by given
    * retryTimes.
-   * 
+   *
    * @param url url to access
    * @param retryTimes retry times when get exception.
    * @return response content of target url.
@@ -80,6 +80,24 @@ public class HttpUtils {
     } catch (HttpException e) {
       throw new HttpException(format("Failed to download content for url: '%s'. Tried '%s' times",
         url, Math.max(retryTimes + 1, 1)));
+    }
+  }
+
+  public static String doGet(final String url, final Map<String, String> headers) {
+
+    HttpGet httpGet = new HttpGet(url);
+    try {
+
+      if (MapUtils.isNotEmpty(headers)) {
+        for (Entry<String, String> entry : headers.entrySet()) {
+          httpGet.addHeader(entry.getKey(), entry.getValue());
+        }
+      }
+      CloseableHttpClient httpClient = getHttpClient();
+      CloseableHttpResponse httpResponse = httpClient.execute(httpGet);
+      return EntityUtils.toString(httpResponse.getEntity());
+    } catch (Exception e) {
+      throw new HttpException(e);
     }
   }
 
@@ -99,7 +117,7 @@ public class HttpUtils {
   /**
    * access given action with given parameters(<strong>default encoding by
    * "UTF-8"</strong>) by post request without retry when exception.
-   * 
+   *
    * @param action action url to access
    * @param parameters parameters to post
    * @return response content of target action url
@@ -137,10 +155,31 @@ public class HttpUtils {
     }
   }
 
+  public static String doPost(final String url, final Map<String, String> headers,
+    final ContentType contentType, final String body) {
+
+    HttpPost httpPost = new HttpPost(url);
+    try {
+
+      httpPost.addHeader("content-type", contentType.getMimeType());
+      if (MapUtils.isNotEmpty(headers)) {
+        for (Entry<String, String> entry : headers.entrySet()) {
+          httpPost.addHeader(entry.getKey(), entry.getValue());
+        }
+      }
+      httpPost.setEntity(new StringEntity(body));
+      CloseableHttpClient httpClient = getHttpClient();
+      CloseableHttpResponse httpResponse = httpClient.execute(httpPost);
+      return EntityUtils.toString(httpResponse.getEntity());
+    } catch (Exception e) {
+      throw new HttpException(e);
+    }
+  }
+
   /**
    * access given action with given parameters by post, if get exception, will
    * retry by given retryTimes.
-   * 
+   *
    * @param action action url to access
    * @param parameters parameters to post
    * @param retryTimes retry times when get exception.
