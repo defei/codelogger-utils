@@ -24,23 +24,40 @@ public class HttpDownloader {
   public HttpResponse doGet(final String url, final Map<String, String> headers) {
 
     HttpGet httpPost = new HttpGet(url);
+    CloseableHttpClient httpClient = null;
+    CloseableHttpResponse httpResponse = null;
     try {
       if (isNotEmpty(headers)) {
         for (Entry<String, String> entry : headers.entrySet()) {
           httpPost.addHeader(entry.getKey(), entry.getValue());
         }
       }
-      CloseableHttpClient httpClient = getHttpClient();
-      CloseableHttpResponse httpResponse = httpClient.execute(httpPost);
+      httpClient = getHttpClient();
+      httpResponse = httpClient.execute(httpPost);
       return parseHttpResponse(httpResponse);
     } catch (Exception e) {
       throw new HttpException(e);
+    } finally {
+      try {
+        if (httpResponse != null) {
+          httpResponse.close();
+        }
+      } catch (IOException e) {
+      }
+      try {
+        if (httpClient != null) {
+          httpClient.close();
+        }
+      } catch (IOException e) {
+      }
     }
   }
 
   public HttpResponse doPost(final String url, final Map<String, String> headers, final String body) {
 
     HttpPost httpPost = new HttpPost(url);
+    CloseableHttpClient httpClient = null;
+    CloseableHttpResponse httpResponse = null;
     try {
       if (isNotEmpty(headers)) {
         for (Entry<String, String> entry : headers.entrySet()) {
@@ -50,11 +67,24 @@ public class HttpDownloader {
       if (isNotBlank(body)) {
         httpPost.setEntity(new StringEntity(body));
       }
-      CloseableHttpClient httpClient = getHttpClient();
-      CloseableHttpResponse httpResponse = httpClient.execute(httpPost);
+      httpClient = getHttpClient();
+      httpResponse = httpClient.execute(httpPost);
       return parseHttpResponse(httpResponse);
     } catch (Exception e) {
       throw new HttpException(e);
+    } finally {
+      try {
+        if (httpResponse != null) {
+          httpResponse.close();
+        }
+      } catch (IOException e) {
+      }
+      try {
+        if (httpClient != null) {
+          httpClient.close();
+        }
+      } catch (IOException e) {
+      }
     }
   }
 
