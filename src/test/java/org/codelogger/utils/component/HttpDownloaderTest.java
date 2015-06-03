@@ -13,11 +13,14 @@ public class HttpDownloaderTest {
 
   private HttpDownloader httpDownloader = new HttpDownloader();
 
-  private String url = "http://www.baidu.com";
+  private String url = "https://www.baidu.com";
+//  private String url = "https://vvu.cloudapp.net/fvas/api/Token";
 
   @Test
   public void doGet() {
 
+//    System.setProperty("javax.net.ssl.trustStore", "/tmp/.keystore");
+//    System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
     HttpResponse httpResponse = httpDownloader.doGet(url, null);
     httpResponse.getContentAsString(UTF_8);
     Integer expectedStatusCode = 200;
