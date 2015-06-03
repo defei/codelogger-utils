@@ -10,7 +10,6 @@ import java.security.cert.X509Certificate;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 
 import org.apache.http.Header;
@@ -106,7 +105,7 @@ public class HttpDownloader {
       if (httpRequest.getHttpEntity() != null) {
         httpPost.setEntity(httpRequest.getHttpEntity());
       }
-      httpClient = getHttpClient();
+      httpClient = httpRequest.isIgnoreSslCertificate() ? getIgnoreSslCertificateHttpClient() : getHttpClient();
       httpResponse = httpClient.execute(httpPost);
       return parseHttpResponse(httpResponse);
     } catch (Exception e) {
@@ -148,7 +147,6 @@ public class HttpDownloader {
 
   public CloseableHttpClient getIgnoreSslCertificateHttpClient() {
 
-    HttpClientBuilder b = HttpClientBuilder.create();
     SSLContext sslContext = null;;
     try {
       sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
@@ -163,17 +161,15 @@ public class HttpDownloader {
     } catch (Exception e) {
       throw new HttpException("can not create http client.", e);
     }
-    b.setSslcontext(sslContext);
-    HostnameVerifier hostnameVerifier = new NoopHostnameVerifier();
     SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(sslContext,
-      hostnameVerifier);
+      new NoopHostnameVerifier());
     Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder
       .<ConnectionSocketFactory> create()
       .register("http", PlainConnectionSocketFactory.getSocketFactory())
       .register("https", sslSocketFactory).build();
     PoolingHttpClientConnectionManager connMgr = new PoolingHttpClientConnectionManager(
       socketFactoryRegistry);
-    b.setConnectionManager(connMgr);
-    return b.build();
+    return HttpClientBuilder.create().setSslcontext(sslContext).setConnectionManager(connMgr)
+      .build();
   }
 }
