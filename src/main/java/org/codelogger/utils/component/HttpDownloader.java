@@ -105,7 +105,8 @@ public class HttpDownloader {
       if (httpRequest.getHttpEntity() != null) {
         httpPost.setEntity(httpRequest.getHttpEntity());
       }
-      httpClient = httpRequest.isIgnoreSslCertificate() ? getIgnoreSslCertificateHttpClient() : getHttpClient();
+      httpClient = httpRequest.isIgnoreSslCertificate() ? getIgnoreSslCertificateHttpClient()
+        : getHttpClient();
       httpResponse = httpClient.execute(httpPost);
       return parseHttpResponse(httpResponse);
     } catch (Exception e) {
@@ -147,7 +148,7 @@ public class HttpDownloader {
 
   public CloseableHttpClient getIgnoreSslCertificateHttpClient() {
 
-    SSLContext sslContext = null;;
+    SSLContext sslContext = null;
     try {
       sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
 
