@@ -1,6 +1,7 @@
 package org.codelogger.utils.beans;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.http.entity.AbstractHttpEntity;
 
@@ -13,6 +14,8 @@ public class HttpRequest {
   private Map<String, String> headers;
 
   private AbstractHttpEntity httpEntity;
+
+  private int timeout = 0;
 
   public HttpRequest() {
 
@@ -90,6 +93,16 @@ public class HttpRequest {
   public void setHttpEntity(final AbstractHttpEntity httpEntity) {
 
     this.httpEntity = httpEntity;
+  }
+
+  public int getTimeout() {
+
+    return timeout;
+  }
+
+  public void setTimeout(final int timeout, final TimeUnit timeUnit) {
+
+    this.timeout = (int) timeUnit.toMillis(timeout);
   }
 
 }

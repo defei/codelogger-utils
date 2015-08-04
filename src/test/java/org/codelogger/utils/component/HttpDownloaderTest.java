@@ -21,7 +21,7 @@ public class HttpDownloaderTest {
 
 //    System.setProperty("javax.net.ssl.trustStore", "/tmp/.keystore");
 //    System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
-    HttpResponse httpResponse = httpDownloader.doGet(url, null);
+    HttpResponse httpResponse = httpDownloader.doGetWithHeaders(url, null);
     httpResponse.getContentAsString(UTF_8);
     Integer expectedStatusCode = 200;
     assertEquals(expectedStatusCode, httpResponse.getStatusCode());

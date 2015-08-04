@@ -15,7 +15,7 @@ import org.codelogger.utils.component.StringProcessChain;
  * A useful tools to handle string, likes judge blank or not blank, first
  * character to upper or lower case, index with, judge contains, encoding,
  * replace, delete and so on...
- * 
+ *
  * @author DengDefei
  */
 public class StringUtils {
@@ -32,7 +32,7 @@ public class StringUtils {
 
   /**
    * Returns true if the source string is null or length = 0; false otherwise.
-   * 
+   *
    * @param source string to be tested.
    * @return true if the source string is null or length = 0; false otherwise.
    */
@@ -44,7 +44,7 @@ public class StringUtils {
   /**
    * Returns true if the source string is null or all characters in this string
    * is space; false otherwise.
-   * 
+   *
    * @param source string to be tested.
    * @return true if the source string is null or all characters in this string
    *         is space; false otherwise.
@@ -66,7 +66,7 @@ public class StringUtils {
   /**
    * Returns true if the source string is not null and at least one character in
    * this string is not space; false otherwise.
-   * 
+   *
    * @param source string to be tested.
    * @return true if the source string is not null and at least one character in
    *         this string is not space; false otherwise.
@@ -80,7 +80,7 @@ public class StringUtils {
    * Convert first character in given string to upper case.<br>
    * If given source string is blank or first character is upper case, return
    * it's self.
-   * 
+   *
    * @param source string to be tested.
    * @return a new string has been converted or it's self.
    */
@@ -99,7 +99,7 @@ public class StringUtils {
    * Convert first character in given string to lower case.<br>
    * If given source string is blank or first character is lower case, return
    * it's self.
-   * 
+   *
    * @param source string want to be handle.
    * @return a new string has been converted or it's self.
    */
@@ -117,7 +117,7 @@ public class StringUtils {
   /**
    * Returns the index within given source string of the first occurrence of the
    * specified target string with ignore case sensitive.
-   * 
+   *
    * @param source source string to be tested.
    * @param target target string to be tested.
    * @return index number if found, -1 otherwise.
@@ -139,7 +139,7 @@ public class StringUtils {
    * Returns the index within given source string of the first occurrence of the
    * specified target string with ignore case sensitive, starting at the specify
    * index.
-   * 
+   *
    * @param source source string to be tested.
    * @param target target string to be tested.
    * @return index number if found, -1 otherwise.
@@ -159,7 +159,7 @@ public class StringUtils {
 
   /**
    * Returns true if given string have white span, false otherwise.<br>
-   * 
+   *
    * @param source string to be tested.
    * @return true if given string have white span, false otherwise.
    */
@@ -177,7 +177,7 @@ public class StringUtils {
   /**
    * Returns true if given string contains given target string ignore case,
    * false otherwise.<br>
-   * 
+   *
    * @param source string to be tested.
    * @param target string to be tested.
    * @return true if given string contains given target string ignore case,
@@ -201,7 +201,7 @@ public class StringUtils {
    * result:["have","dream","but","now","it","is","only","dream"].<br>
    * <p>
    * NB. "1word","word1" also were words.
-   * 
+   *
    * @param text source string to be handled.
    * @param wordMinimumLength word minimum length to partition.
    * @return words in given text by given word minimum length.
@@ -228,7 +228,7 @@ public class StringUtils {
 
   /**
    * 根据正则表达式提取字符串
-   * 
+   *
    * @param text 源字符串
    * @param regex 正则表达式
    * @return 所以符合正则表达式的字符串的集合
@@ -246,7 +246,7 @@ public class StringUtils {
 
   /**
    * Returns true if given text contains given word; false otherwise.
-   * 
+   *
    * @param text string text to be tested.
    * @param word string word to be tested.
    * @return true if given text contains given word; false otherwise.
@@ -271,7 +271,7 @@ public class StringUtils {
   /**
    * Returns true if given text contains given word ignore case; false
    * otherwise.
-   * 
+   *
    * @param text string text to be tested.
    * @param word string word to be tested.
    * @return true if given text contains given word ignore case; false
@@ -289,7 +289,7 @@ public class StringUtils {
    * Trim all white space in the given string.<br>
    * If given source string self if it's null or length == 0 or not have white
    * space.
-   * 
+   *
    * @param source
    * @return a new string has been removed all white space if given source
    *         string have white space; given source string self otherwise.
@@ -302,7 +302,7 @@ public class StringUtils {
   /**
    * Returns true if given source string start with target string ignore case
    * sensitive; false otherwise.
-   * 
+   *
    * @param source string to be tested.
    * @param target string to be tested.
    * @return true if given source string start with target string ignore case
@@ -322,7 +322,7 @@ public class StringUtils {
   /**
    * Returns true if given source string end with target string ignore case
    * sensitive; false otherwise.
-   * 
+   *
    * @param source string to be tested.
    * @param target string to be tested.
    * @return true if given source string end with target string ignore case
@@ -341,7 +341,7 @@ public class StringUtils {
 
   /**
    * Start a string process chain for given source.
-   * 
+   *
    * @param source source String.
    * @return return a StringProcessChain for given source.
    */
@@ -351,9 +351,9 @@ public class StringUtils {
   }
 
   /**
-   * Returns a random alphabetic: a-zA-Z.
-   * 
-   * @return a random alphabetic: a-zA-Z
+   * Returns a random alphabetic: A-Z.
+   *
+   * @return a random alphabetic: A-Z
    */
   public static char getRandomUpperCaseAlphabetic() {
 
@@ -361,9 +361,9 @@ public class StringUtils {
   }
 
   /**
-   * Returns a random alphabetic: a-zA-Z.
-   * 
-   * @return a random alphabetic: a-zA-Z
+   * Returns a random alphabetic: a-z.
+   *
+   * @return a random alphabetic: a-z
    */
   public static char getRandomLowerCaseAlphabetic() {
 
@@ -372,7 +372,7 @@ public class StringUtils {
 
   /**
    * Returns a random alphabetic: a-zA-Z.
-   * 
+   *
    * @return a random alphabetic: a-zA-Z
    */
   public static char getRandomAlphabetic() {
@@ -387,7 +387,7 @@ public class StringUtils {
 
   /**
    * Returns a random given length size alphabetic string.
-   * 
+   *
    * @param stringLength the length of the random string you want.
    * @return a random given length size alphabetic string.
    */
@@ -402,7 +402,7 @@ public class StringUtils {
 
   /**
    * Returns a random passowrd char: a-zA-Z0-9.
-   * 
+   *
    * @return a random passowrd char: a-zA-Z0-9
    */
   public static char getRandomPasswordChar() {
@@ -417,7 +417,7 @@ public class StringUtils {
 
   /**
    * Returns a random given length size passowrd string([a-zA-Z0-9]+).
-   * 
+   *
    * @param stringLength the length of the random passowrd you want.
    * @return a random given length size passowrd string([a-zA-Z0-9]+).
    */
@@ -432,7 +432,7 @@ public class StringUtils {
 
   /**
    * Return encoded string by given charset.
-   * 
+   *
    * @param source source string to be handle.
    * @param sourceCharset source string charset name.
    * @param encodingCharset want encoding to which charset.
@@ -457,7 +457,7 @@ public class StringUtils {
 
   /**
    * Sort the array in reverse order.</br>反转字符串。
-   * 
+   *
    * @param string string to be handled.
    */
   public static String reverse(final String string) {
@@ -467,7 +467,7 @@ public class StringUtils {
 
   /**
    * Count how much target in souce string.</br>统计target在source中出现的次数。
-   * 
+   *
    * @param source source string
    * @param target target string
    * @return the count of target in source string.
@@ -484,7 +484,7 @@ public class StringUtils {
 
   /**
    * Count how much target in souce string.</br>统计target在source中出现的次数。
-   * 
+   *
    * @param source source string
    * @param target target string
    * @return the count of target in source string.

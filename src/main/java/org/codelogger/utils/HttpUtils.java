@@ -1,25 +1,26 @@
 package org.codelogger.utils;
 
 import static java.lang.String.format;
+import static org.codelogger.utils.beans.HttpResponse.UTF_8;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.config.SocketConfig;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.codelogger.utils.beans.HttpRequest;
+import org.codelogger.utils.component.HttpDownloader;
 import org.codelogger.utils.exceptions.HttpException;
 
 public class HttpUtils {
@@ -36,26 +37,15 @@ public class HttpUtils {
    */
   public static String doGet(final String url) {
 
-    CloseableHttpClient httpClient = getHttpClient();
-    HttpGet httpGet = new HttpGet(url);
-    try {
-      return EntityUtils.toString(httpClient.execute(httpGet).getEntity());
-    } catch (IOException e) {
-      throw new HttpException(e);
-    }
+    return new HttpDownloader().doGet(url).getContentAsString(UTF_8);
   }
 
   public static String doGetWidthTimeout(final String url, final Integer milliSecondsToTimeout) {
 
-    SocketConfig socketConfig = SocketConfig.custom().setSoTimeout(milliSecondsToTimeout).build();
-    CloseableHttpClient httpClient = HttpClientBuilder.create()
-      .setDefaultSocketConfig(socketConfig).build();
-    HttpGet httpGet = new HttpGet(url);
-    try {
-      return EntityUtils.toString(httpClient.execute(httpGet).getEntity());
-    } catch (IOException e) {
-      throw new HttpException(e);
-    }
+    HttpDownloader downloader = new HttpDownloader();
+    HttpRequest httpRequest = new HttpRequest(url);
+    httpRequest.setTimeout(milliSecondsToTimeout, TimeUnit.MILLISECONDS);
+    return downloader.doGet(httpRequest).getContentAsString(UTF_8);
   }
 
   private static CloseableHttpClient getHttpClient() {
@@ -85,20 +75,7 @@ public class HttpUtils {
 
   public static String doGet(final String url, final Map<String, String> headers) {
 
-    HttpGet httpGet = new HttpGet(url);
-    try {
-
-      if (MapUtils.isNotEmpty(headers)) {
-        for (Entry<String, String> entry : headers.entrySet()) {
-          httpGet.addHeader(entry.getKey(), entry.getValue());
-        }
-      }
-      CloseableHttpClient httpClient = getHttpClient();
-      CloseableHttpResponse httpResponse = httpClient.execute(httpGet);
-      return EntityUtils.toString(httpResponse.getEntity());
-    } catch (Exception e) {
-      throw new HttpException(e);
-    }
+    return new HttpDownloader().doGetWithHeaders(url, headers).getContentAsString(UTF_8);
   }
 
   private static String doGetByLoop(final String url, final int retryTimes) {
@@ -142,38 +119,16 @@ public class HttpUtils {
 
   public static String doPost(final String url, final ContentType contentType, final String body) {
 
-    HttpPost httpPost = new HttpPost(url);
-    try {
-
-      httpPost.addHeader("content-type", contentType.getMimeType());
-      httpPost.setEntity(new StringEntity(body));
-      CloseableHttpClient httpClient = getHttpClient();
-      CloseableHttpResponse httpResponse = httpClient.execute(httpPost);
-      return EntityUtils.toString(httpResponse.getEntity());
-    } catch (Exception e) {
-      throw new HttpException(e);
-    }
+    return doPost(url, null, contentType, body);
   }
 
   public static String doPost(final String url, final Map<String, String> headers,
     final ContentType contentType, final String body) {
 
-    HttpPost httpPost = new HttpPost(url);
-    try {
-
-      httpPost.addHeader("content-type", contentType.getMimeType());
-      if (MapUtils.isNotEmpty(headers)) {
-        for (Entry<String, String> entry : headers.entrySet()) {
-          httpPost.addHeader(entry.getKey(), entry.getValue());
-        }
-      }
-      httpPost.setEntity(new StringEntity(body));
-      CloseableHttpClient httpClient = getHttpClient();
-      CloseableHttpResponse httpResponse = httpClient.execute(httpPost);
-      return EntityUtils.toString(httpResponse.getEntity());
-    } catch (Exception e) {
-      throw new HttpException(e);
-    }
+    HttpDownloader httpDownloader = new HttpDownloader();
+    HttpRequest httpRequest = new HttpRequest(url, headers);
+    httpRequest.setHttpEntity(new StringEntity(body, contentType));
+    return httpDownloader.doPost(httpRequest).getContentAsString(UTF_8);
   }
 
   /**

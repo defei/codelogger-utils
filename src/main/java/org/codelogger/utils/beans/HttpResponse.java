@@ -10,7 +10,7 @@ import org.codelogger.utils.exceptions.EncodingException;
 
 public class HttpResponse {
 
-  private static final String UTF_8 = "UTF-8";
+  public static final String UTF_8 = "UTF-8";
 
   private Integer statusCode;
 
@@ -47,7 +47,8 @@ public class HttpResponse {
     try {
       return isEmpty(content) ? "" : new String(content, charsetName);
     } catch (UnsupportedEncodingException e) {
-      throw new EncodingException("Got an exception when convert content to utf-8 string.", e);
+      throw new EncodingException(format("Got an exception when convert content to %s string.",
+        charsetName), e);
     }
   }
 

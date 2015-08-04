@@ -1,5 +1,7 @@
 package org.codelogger.utils;
 
+import static org.codelogger.utils.StringUtils.isBlank;
+
 /**
  * A useful tools to handle numbers.
  *
@@ -149,6 +151,12 @@ public class ValueUtils {
   public static Boolean getValue(final Boolean booleanValue, final Boolean defaultValue) {
 
     return booleanValue == null ? defaultValue : booleanValue;
+  }
+
+  @SuppressWarnings({ "unchecked", "rawtypes" })
+  protected <T extends Enum> T getEnumInstance(final Class<T> ct, final String name) {
+
+    return isBlank(name) ? null : (T) Enum.valueOf(ct, name);
   }
 
 }

@@ -18,6 +18,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
+import org.apache.http.config.SocketConfig;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
@@ -41,7 +42,7 @@ public class HttpDownloader {
     return doGet(httpRequest);
   }
 
-  public HttpResponse doGet(final String url, final Map<String, String> headers) {
+  public HttpResponse doGetWithHeaders(final String url, final Map<String, String> headers) {
 
     HttpRequest httpRequest = new HttpRequest(url, headers);
     return doGet(httpRequest);
@@ -58,8 +59,7 @@ public class HttpDownloader {
           httpPost.addHeader(entry.getKey(), entry.getValue());
         }
       }
-      httpClient = httpRequest.isIgnoreSslCertificate() ? getIgnoreSslCertificateHttpClient()
-        : getHttpClient();
+      httpClient = getIgnoreSslCertificateHttpClient(httpRequest);
       httpResponse = httpClient.execute(httpPost);
       return parseHttpResponse(httpResponse);
     } catch (Exception e) {
@@ -105,8 +105,7 @@ public class HttpDownloader {
       if (httpRequest.getHttpEntity() != null) {
         httpPost.setEntity(httpRequest.getHttpEntity());
       }
-      httpClient = httpRequest.isIgnoreSslCertificate() ? getIgnoreSslCertificateHttpClient()
-        : getHttpClient();
+      httpClient = getIgnoreSslCertificateHttpClient(httpRequest);
       httpResponse = httpClient.execute(httpPost);
       return parseHttpResponse(httpResponse);
     } catch (Exception e) {
@@ -139,14 +138,37 @@ public class HttpDownloader {
     return new HttpResponse(statusCode, responseHeaders, content);
   }
 
-  private CloseableHttpClient getHttpClient() {
+  private CloseableHttpClient getIgnoreSslCertificateHttpClient(final HttpRequest httpRequest) {
 
     HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
-    CloseableHttpClient httpClient = httpClientBuilder.build();
-    return httpClient;
+    SocketConfig socketConfig = null;
+    PoolingHttpClientConnectionManager connMgr = null;
+    if (httpRequest.getTimeout() > 0) {
+
+      socketConfig = SocketConfig.custom().setSoTimeout(httpRequest.getTimeout()).build();
+    }
+    if (httpRequest.isIgnoreSslCertificate()) {
+      SSLContext sslContext = buildIgnoreSslCertificatSslContext();
+      SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(sslContext,
+        new NoopHostnameVerifier());
+      Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder
+        .<ConnectionSocketFactory> create()
+        .register("http", PlainConnectionSocketFactory.getSocketFactory())
+        .register("https", sslSocketFactory).build();
+      connMgr = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
+      if (socketConfig != null) {
+        connMgr.setDefaultSocketConfig(socketConfig);
+      }
+      httpClientBuilder.setSslcontext(sslContext);
+    }
+    if (connMgr != null) {
+      httpClientBuilder.setConnectionManager(connMgr);
+    }
+
+    return httpClientBuilder.build();
   }
 
-  public CloseableHttpClient getIgnoreSslCertificateHttpClient() {
+  private SSLContext buildIgnoreSslCertificatSslContext() {
 
     SSLContext sslContext = null;
     try {
@@ -162,15 +184,6 @@ public class HttpDownloader {
     } catch (Exception e) {
       throw new HttpException("can not create http client.", e);
     }
-    SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(sslContext,
-      new NoopHostnameVerifier());
-    Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder
-      .<ConnectionSocketFactory> create()
-      .register("http", PlainConnectionSocketFactory.getSocketFactory())
-      .register("https", sslSocketFactory).build();
-    PoolingHttpClientConnectionManager connMgr = new PoolingHttpClientConnectionManager(
-      socketFactoryRegistry);
-    return HttpClientBuilder.create().setSslcontext(sslContext).setConnectionManager(connMgr)
-      .build();
+    return sslContext;
   }
 }
