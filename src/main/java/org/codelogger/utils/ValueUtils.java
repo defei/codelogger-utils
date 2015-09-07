@@ -6,7 +6,6 @@ import static org.codelogger.utils.StringUtils.isBlank;
  * A useful tools to handle numbers.
  *
  * @author DengDefei
- *
  */
 public class ValueUtils {
 
@@ -110,7 +109,6 @@ public class ValueUtils {
    * Returns a string by given value.<br>
    * Fill "0" in the head of given source if given source value length below
    * given size; string of given source value otherwise.<br>
-   *
    * <p>
    * e.g:<br>
    * source:123,size:4 ==> "0123".<br>
@@ -154,7 +152,7 @@ public class ValueUtils {
   }
 
   @SuppressWarnings({ "unchecked", "rawtypes" })
-  protected <T extends Enum> T getEnumInstance(final Class<T> ct, final String name) {
+  public static <T extends Enum> T getEnumInstance(final Class<T> ct, final String name) {
 
     return isBlank(name) ? null : (T) Enum.valueOf(ct, name);
   }
