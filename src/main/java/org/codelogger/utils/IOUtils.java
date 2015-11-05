@@ -9,90 +9,84 @@ import java.net.URL;
 
 public class IOUtils {
 
-    /**
-     * 1 KB
-     */
-    private static final int ONE_KILOBYTE_SIZE = 1024;
+  /**
+   * 1 KB
+   */
+  private static final int ONE_KILOBYTE_SIZE = 1024;
 
-    /**
-     * 32 KB
-     */
-    private static final int BUFFER_SIZE = ONE_KILOBYTE_SIZE * 32;
+  /**
+   * 32 KB
+   */
+  private static final int BUFFER_SIZE = ONE_KILOBYTE_SIZE * 32;
 
-    public static InputStream getInputStreamFromNetwork(final String targetURL) throws IOException {
+  public static InputStream getInputStreamFromNetwork(final String targetURL) throws IOException {
 
-        return new URL(targetURL).openConnection().getInputStream();
+    return new URL(targetURL).openConnection().getInputStream();
+  }
+
+  public static byte[] getBytesFromNetwork(final String targetURL) throws IOException {
+
+    return getBytes(getInputStreamFromNetwork(targetURL));
+  }
+
+  /**
+   * Get bytes from given input stream.
+   *
+   * @param sourceInputStream Source inputStream object to be handled.
+   * @return bytes from given input stream.
+   * @throws IOException
+   */
+  public static byte[] getBytes(final InputStream sourceInputStream) throws IOException {
+
+    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+    byte[] buffer = new byte[BUFFER_SIZE];
+    for (int len = 0; (len = sourceInputStream.read(buffer)) != -1;) {
+      byteArrayOutputStream.write(buffer, 0, len);
     }
+    byte[] arrayOfByte = byteArrayOutputStream.toByteArray();
+    return arrayOfByte;
+  }
 
-    public static byte[] getBytesFromNetwork(final String targetURL) throws IOException {
+  /**
+   * Write source input stream bytes into destination output stream.
+   *
+   * @param sourceInputStream input stream to be handled.
+   * @param destinationOutputStream output stream to be handled.
+   * @return true if write source input stream bytes into destination output
+   *         stream success; false otherwise.
+   * @throws IOException
+   */
+  public static boolean write(final InputStream sourceInputStream,
+    final OutputStream destinationOutputStream) throws IOException {
 
-        return getBytes(getInputStreamFromNetwork(targetURL));
+    byte[] buffer = buildBuffer(BUFFER_SIZE);
+    for (int len = 0; (len = sourceInputStream.read(buffer)) != -1;) {
+      destinationOutputStream.write(buffer, 0, len);
     }
+    destinationOutputStream.flush();
+    return true;
+  }
 
-    /**
-     * Get bytes from given input stream.
-     * 
-     * @param sourceInputStream
-     *            Source inputStream object to be handled.
-     * @return bytes from given input stream.
-     * @throws IOException
-     */
-    public static byte[] getBytes(final InputStream sourceInputStream) throws IOException {
+  /**
+   * Write source bytes into destination output stream.
+   *
+   * @param sourceBytes bytes to be handled.
+   * @param destinationOutputStream destination output stream to be handled.
+   * @return true if write source bytes into destination output stream success.
+   * @throws IOException
+   */
+  public static boolean write(final byte[] sourceBytes, final OutputStream destinationOutputStream)
+    throws IOException {
 
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        byte[] buffer = new byte[BUFFER_SIZE];
-        for (int len = 0; (len = sourceInputStream.read(buffer)) != -1;) {
-            byteArrayOutputStream.write(buffer, 0, len);
-        }
-        byte[] arrayOfByte = byteArrayOutputStream.toByteArray();
-        return arrayOfByte;
-    }
+    BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(destinationOutputStream);
+    bufferedOutputStream.write(sourceBytes, 0, sourceBytes.length);
+    bufferedOutputStream.flush();
+    return true;
+  }
 
-    /**
-     * Write source input stream bytes into destination output stream.
-     * 
-     * @param sourceInputStream
-     *            input stream to be handled.
-     * @param destinationOutputStream
-     *            output stream to be handled.
-     * @return true if write source input stream bytes into destination output
-     *         stream success; false otherwise.
-     * @throws IOException
-     */
-    public static boolean write(final InputStream sourceInputStream,
-            final OutputStream destinationOutputStream) throws IOException {
+  private static byte[] buildBuffer(final int bufferSize) {
 
-        byte[] buffer = buildBuffer(BUFFER_SIZE);
-        for (int len = 0; (len = sourceInputStream.read(buffer)) != -1;)
-            destinationOutputStream.write(buffer, 0, len);
-        destinationOutputStream.flush();
-        return true;
-    }
-
-    /**
-     * Write source bytes into destination output stream.
-     * 
-     * @param sourceBytes
-     *            bytes to be handled.
-     * @param destinationOutputStream
-     *            destination output stream to be handled.
-     * @return true if write source bytes into destination output stream
-     *         success.
-     * @throws IOException
-     */
-    public static boolean write(final byte[] sourceBytes, final OutputStream destinationOutputStream)
-            throws IOException {
-
-        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(
-                destinationOutputStream);
-        bufferedOutputStream.write(sourceBytes, 0, sourceBytes.length);
-        bufferedOutputStream.flush();
-        return true;
-    }
-
-    private static byte[] buildBuffer(final int bufferSize) {
-
-        return new byte[bufferSize];
-    }
+    return new byte[bufferSize];
+  }
 
 }
