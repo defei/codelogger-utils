@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -266,7 +267,7 @@ public class ArrayUtils {
    * @param array 源数组。
    * @param start 裁剪的起始位置的索引。
    * @param end 裁剪的结束位置的索引。
-   * @return 
+   * @return
    *         一个新的数组，包含从指定索引开始到指定索引结束的所有元素。如果数组为空或起始索引小于0，或起始索引大于结束索引，或结束大于数组本身索引长度
    *         ，则返回数组本身。
    */
@@ -291,7 +292,7 @@ public class ArrayUtils {
    * @param array 源数组。array to be handed.
    * @param start 裁剪的起始位置的索引。start index number.
    * @param end 裁剪的结束位置的索引。end index number.
-   * @return 
+   * @return
    *         一个新的数组，包含从指定索引开始到指定索引结束的所有元素。如果数组为空或起始索引小于0，或起始索引大于结束索引，或结束大于数组本身索引长度
    *         ，则返回数组本身。a new array if array is not empty and start greater or
    *         equals 0 and less than end and end less than array length; array
@@ -579,6 +580,7 @@ public class ArrayUtils {
    */
   public static String join(final Object array, final String separator) {
 
-    return join(toArray(array, ClassUtils.getComponentClass(array)), separator);
+    return isArray(array) ? join(toArray(array, ClassUtils.getComponentClass(array)), separator)
+      : Objects.toString(array);
   }
 }
